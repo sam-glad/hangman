@@ -6,11 +6,14 @@ puts "Welcome to Hangman!\n\n"
 
 # Initialize word bank and choose random word
 # NOTE word_bank = %w[dumpling soup five alarming full tasty boston]
-hidden_noun = RandomWord.noun.next
+hidden_noun = RandomWord.nouns.next
 hidden_adj = RandomWord.adjs.next
 hidden_words = [hidden_noun, hidden_adj]
 
 hidden = hidden_words.sample
+if hidden.include?("_")
+  hidden = hidden[0...hidden.index("_")]
+end
 
 letters_guessed = []
 

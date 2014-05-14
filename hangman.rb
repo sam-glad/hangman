@@ -5,7 +5,6 @@ puts "Welcome to Hangman!\n\n"
 # Initialize word bank and choose random word
 word_bank = %w[dumpling soup five alarming full tasty boston]
 hidden = word_bank.sample
-puts hidden
 
 letters_guessed = []
 
@@ -31,7 +30,7 @@ end
 
 def check_for_win(player_word, hidden)
   if player_word == hidden
-    puts "\nCongratulations, you've guessed the word!"
+    puts "#{hidden}\nCongratulations, you've guessed the word!"
     return true
   else
     return false
@@ -50,19 +49,21 @@ while player_word != hidden
     word_check(guess, hidden)
     break
   else # If user guesses a letter
-    letters_guessed << guess
-    if hidden.include?(guess) # If guessed letter is in word
-      update_word(guess, hidden, player_word)
-      check_for_win(player_word, hidden)
-    else # If guessed letter is not in word
-      chances -= 1
-      puts "\nSorry, no #{guess}'s found."
-      if chances == 0
-        puts "You're out of chances, better luck next time..."
-        break
+    if !letters_guessed.include?(guess)
+      letters_guessed << guess
+      if hidden.include?(guess) # If guessed letter is in word
+        update_word(guess, hidden, player_word)
+        check_for_win(player_word, hidden)
+      else # If guessed letter is not in word
+        chances -= 1
+        puts "\nSorry, no #{guess}'s found."
+        if chances == 0
+          puts "You're out of chances, better luck next time..."
+          break
+        end
       end
+    else
+      puts "You already used that letter!\n\n"
     end
   end
 end
-
-# TODO: only allow user to guess letter once

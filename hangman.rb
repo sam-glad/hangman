@@ -1,10 +1,16 @@
 #!/usr/bin/env ruby
 
+require 'random-word'
+
 puts "Welcome to Hangman!\n\n"
 
 # Initialize word bank and choose random word
-word_bank = %w[dumpling soup five alarming full tasty boston]
-hidden = word_bank.sample
+# NOTE word_bank = %w[dumpling soup five alarming full tasty boston]
+hidden_noun = RandomWord.noun.next
+hidden_adj = RandomWord.adjs.next
+hidden_words = [hidden_noun, hidden_adj]
+
+hidden = hidden_words.sample
 
 letters_guessed = []
 
@@ -59,6 +65,7 @@ while player_word != hidden
         puts "\nSorry, no #{guess}'s found."
         if chances == 0
           puts "You're out of chances, better luck next time..."
+          puts "The word was: #{hidden}"
           break
         end
       end

@@ -46,13 +46,21 @@ def check_for_win(player_word, hidden)
   end
 end
 
+def print_arr(arr)
+  arr.each do |i|
+    print "#{i} "
+  end
+end
+
 # Show word progress
 player_word = "_" * hidden.length
 chances = hidden.length + 2 # TODO should this be sth else?
 while player_word != hidden
   puts "Word: #{player_word}"
   puts "Chances remaining: #{chances}"
-  print "Guess a single letter (a-z) or the entire word: "
+  print "Letters guessed: "
+  print_arr(letters_guessed)
+  print "\nGuess a single letter (a-z) or the entire word: "
   guess = gets.chomp
   if guess.length > 1 # If user guesses a word
     word_check(guess, hidden)

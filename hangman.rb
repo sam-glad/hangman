@@ -5,7 +5,7 @@ require 'random-word'
 puts "Welcome to Hangman!\n\n"
 
 # Initialize word bank and choose random word
-# NOTE word_bank = %w[dumpling soup five alarming full tasty boston]
+# NOTE: word_bank = %w[dumpling soup five alarming full tasty boston]
 hidden_noun = RandomWord.nouns.next
 hidden_adj = RandomWord.adjs.next
 hidden_words = [hidden_noun, hidden_adj]
@@ -21,6 +21,7 @@ def word_check(word, str)
   if check_for_win(word, str)
   else
     puts "Sorry, that is not the correct word. Better luck next time..."
+    puts "The word was: #{str}"
   end
 end
 
@@ -85,3 +86,6 @@ while player_word != hidden
     end
   end
 end
+
+puts "\nPress <enter> to exit."
+gets

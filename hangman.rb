@@ -62,6 +62,13 @@ def no_chances(hidden)
   puts "The word was: #{hidden}"
 end
 
+def end_prompt(user_choice)
+  puts "\nPress P to play again. Press any other letter/number or <enter> to exit."
+  user_choice = STDIN.getch.downcase
+  puts "\n\n\n"
+  return user_choice
+end
+
 #==============================================================================
 user_choice = "p"
 
@@ -85,6 +92,8 @@ while user_choice == "p"
   player_word = "_" * hidden.length
   chances_left = hidden.length + 2 # TODO should this be sth else? Important for gameplay, not for overall funvtion
   chances_total = chances_left
+
+  # So long as user has not guessed the word...
   while player_word != hidden
     prompt_player(letters_guessed, player_word, chances_left)
     guess = gets.chomp # TODO get rid of this?
@@ -113,8 +122,5 @@ while user_choice == "p"
       end
     end
   end
-
-  print "\nPress P to play again. Press any other letter/number or <enter> to exit."
-  user_choice = STDIN.getch.downcase
-  puts "\n\n\n"
+  user_choice = end_prompt(user_choice) # Allow user either to play again or to close program
 end

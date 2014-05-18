@@ -2,6 +2,7 @@
 
 require 'random-word'
 require 'io/console'
+require 'colorize'
 load 'gallows.rb'
 
 def prompt_player(arr, player_word, chances_left)
@@ -15,8 +16,8 @@ end
 def word_check(word, str)
   if check_for_win(word, str)
   else
-    puts "Sorry, that is not the correct word. Better luck next time..."
-    puts "The word was: #{str}"
+    puts "Sorry, that is not the correct word. Better luck next time...".red
+    puts "The word was: ".red + "#{str}".light_blue
   end
 end
 
@@ -30,12 +31,12 @@ def update_word(guess, hidden, player_word)
     end
     count += 1
   end
-  puts "Found #{times_found} occurrence(s) of the character #{guess}.\n\n"
+  puts "Found #{times_found} occurrence(s) of the character #{guess}.\n\n".light_blue
 end
 
 def check_for_win(player_word, hidden)
   if player_word == hidden
-    puts "\nCongratulations, you've correctly guessed the word \"#{hidden}\"!"
+    puts "\nCongratulations, you've correctly guessed the word ".green + "\"#{hidden}\"!".light_blue
     return true
   else
     return false
@@ -110,7 +111,7 @@ while user_choice == "p"
           check_for_win(player_word, hidden)
         else # If guessed letter is not in word
           chances_left -= 1
-          puts "\nSorry, no #{guess}'s found."
+          puts "\nSorry, no ".yellow + "#{guess}".light_blue + "'s found.".yellow
           print_gallows(chances_left, chances_total)
           if chances_left == 0
             no_chances(hidden)
@@ -118,7 +119,7 @@ while user_choice == "p"
           end
         end
       else
-        puts "You already used that letter!\n\n"
+        puts "You already used that letter!\n\n".yellow
       end
     end
   end

@@ -2,20 +2,13 @@
 
 require 'random-word'
 
-puts "Welcome to Hangman!\n\n"
-
-# Initialize word bank and choose random word
-# NOTE: word_bank = %w[dumpling soup five alarming full tasty boston]
-hidden_noun = RandomWord.nouns.next
-hidden_adj = RandomWord.adjs.next
-hidden_words = [hidden_noun, hidden_adj]
-
-hidden = hidden_words.sample
-if hidden.include?("_")
-  hidden = hidden[0...hidden.index("_")]
+def prompt_player(arr, player_word, chances)
+  puts "Word: #{player_word}"
+  puts "Chances remaining: #{chances}"
+  print "Letters guessed: "
+  print_arr(arr)
+  print "\nGuess a single letter (a-z) or the entire word: "
 end
-
-letters_guessed = []
 
 def word_check(word, str)
   if check_for_win(word, str)
@@ -40,7 +33,7 @@ end
 
 def check_for_win(player_word, hidden)
   if player_word == hidden
-    puts "#{hidden}\nCongratulations, you've guessed the word!"
+    puts "\nCongratulations, you've correctly guessed the word \"#{hidden}\"!"
     return true
   else
     return false
@@ -53,16 +46,45 @@ def print_arr(arr)
   end
 end
 
+# FIXME busted?
+def check_input(str) # This comes after guess = gets.chomp.downcase
+  while !(str >= "a" && str <= "z")
+    puts "Please enter a letter."
+    str = gets.chomp
+    str = str.chomp.downcase
+  end
+  return str
+end
+
+def no_chances(hidden)
+  puts "You're out of chances, better luck next time..."
+  puts "The word was: #{hidden}"
+end
+
+#==============================================================================
+
+puts "Welcome to Hangman!\n\n"
+
+letters_guessed = []
+
+# Initialize word bank and choose random word
+# NOTE: word_bank = %w[dumpling soup five alarming full tasty boston]
+hidden_noun = RandomWord.nouns.next
+hidden_adj = RandomWord.adjs.next
+hidden_words = [hidden_noun, hidden_adj]
+
+hidden = hidden_words.sample
+if hidden.include?("_")
+  hidden = hidden[0...hidden.index("_")]
+end
+
 # Show word progress
 player_word = "_" * hidden.length
-chances = hidden.length + 2 # TODO should this be sth else?
+chances = hidden.length + 2 # TODO should this be sth else? Important for gameplay, not for overall funvtion
 while player_word != hidden
-  puts "Word: #{player_word}"
-  puts "Chances remaining: #{chances}"
-  print "Letters guessed: "
-  print_arr(letters_guessed)
-  print "\nGuess a single letter (a-z) or the entire word: "
-  guess = gets.chomp
+  prompt_player(letters_guessed, player_word, chances)
+  guess = gets.chomp # TODO get rid of this?
+  guess = check_input(guess)
   if guess.length > 1 # If user guesses a word
     word_check(guess, hidden)
     break
@@ -76,8 +98,7 @@ while player_word != hidden
         chances -= 1
         puts "\nSorry, no #{guess}'s found."
         if chances == 0
-          puts "You're out of chances, better luck next time..."
-          puts "The word was: #{hidden}"
+          no_chances(hidden)
           break
         end
       end

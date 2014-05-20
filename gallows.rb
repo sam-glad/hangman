@@ -1,6 +1,6 @@
 def print_gallows(chances_left, chances_total)
   if chances_left == chances_total
-  puts "     ________
+    puts "     ________
      |      |
             |
             |
@@ -8,6 +8,7 @@ def print_gallows(chances_left, chances_total)
     ________|
     | |   | |
     |     |"
+    puts
 
   elsif chances_left >= chances_total * 4 / 5
     puts "     ________
@@ -18,6 +19,7 @@ def print_gallows(chances_left, chances_total)
     ________|
     | |   | |
     |     |"
+    puts
 
   elsif chances_left >= chances_total * 3 / 5
     puts "     ________
@@ -28,6 +30,7 @@ def print_gallows(chances_left, chances_total)
     ________|
     | |   | |
     |     |"
+    puts
 
   elsif chances_left >= chances_total * 2 / 5
     puts "     ________
@@ -38,6 +41,7 @@ def print_gallows(chances_left, chances_total)
     ________|
     | |   | |
     |     |"
+    puts
 
 
   elsif chances_left == 0
@@ -49,6 +53,7 @@ def print_gallows(chances_left, chances_total)
     ________|
     | |   | |
     |     |"
+    puts
 
   else
     puts "     ________
@@ -59,5 +64,6 @@ def print_gallows(chances_left, chances_total)
     ________|
     | |   | |
     |     |"
+    puts
   end
 end

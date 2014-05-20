@@ -3,6 +3,8 @@
 require 'random-word'
 require 'io/console'
 require 'colorize'
+require 'csv'
+require 'pry'
 load 'gallows.rb'
 
 def word_init
@@ -30,8 +32,8 @@ end
 def confirm_word_entry
   print "Are you sure you want to guess a word? ".yellow +
       "You will lose the game if it is wrong. ".yellow +
-      "Press ".yellow + "C".cyan + " to confirm or any other letter ".yellow +
-       "(or <enter>) to go back and guess again.".yellow
+      "Press ".yellow + "<enter>".cyan + " to confirm or any other letter ".yellow +
+      "to go back and guess again.".yellow
    word = STDIN.getch.downcase
    puts "\n\n"
   return word
@@ -44,6 +46,7 @@ def word_check(word, str, chances_left, chances_total)
     print_gallows(chances_left, chances_total)
     puts "Sorry, that is not the correct word. Better luck next time...".red
     puts "The word was: ".red + "#{str}".cyan
+    return false
   end
 end
 
@@ -104,12 +107,48 @@ def end_prompt(user_choice)
   return user_choice
 end
 
-#==============================================================================
+def update_record(stats)
+  File.open("Hangman Statistics.csv", 'w') do |row|
+    row.puts "Total,Wins,Losses"
+    row.puts "#{stats["Games"]},#{stats["Wins"]},#{stats["Losses"]}"
+  end
+end
+
+#===================================================================================
+
+puts "Welcome to Hangman\n\n\n"
+
+if !File.exist?("Hangman Statistics.csv")
+  stats = {
+  "Games" => 0,
+  "Wins" => 0,
+  "Losses" => 0
+  }
+
+  update_record(stats)
+end
+
+# TODO Read in games, wins, losses, ratio
+CSV.foreach("Hangman Statistics.csv", headers: true) do |row|
+  games = row["Total"] # FIXME Does not work; why?!
+  wins = row["Wins"]
+  losses = row["Losses"]
+  stats = {"Games" => games, "Wins" => wins, "Losses" => losses}
+end
+
+puts "     ---=Stats=---"
+puts "Total number of games: #{stats["Games"]}"
+puts "Wins: #{stats["Wins"]}"
+puts "Losses: #{stats["Losses"]}"
+puts "\n\n"
+
 user_choice = "\r"
 
-while user_choice == "\r"
-  puts "Welcome to Hangman!\n\n"
+stats["Wins"] = stats["Wins"].to_i
+stats["Losses"] = stats["Losses"].to_i
+stats["Games"] = stats["Games"].to_i
 
+while user_choice == "\r"
   letters_guessed = []
   user_choice = ""
 
@@ -124,14 +163,18 @@ while user_choice == "\r"
 
   # So long as user has not guessed the word...
   while player_word != hidden
+    # TODO print stats
     prompt_player(letters_guessed, player_word, chances_left)
     guess = gets.chomp.downcase
     guess = check_input(guess)
     if guess.length > 1 # If user guesses a word; TODO MAKE ALL THIS A NEW LITTLE METHOD
       word_confirmation = confirm_word_entry
-      if word_confirmation == "c"
-        word_check(guess, hidden, chances_left, chances_total)
-        break
+      if word_confirmation == "\r"
+        if !word_check(guess, hidden, chances_left, chances_total)
+          stats["Losses"] += 1
+          stats["Games"] += 1
+          break
+        end
       else
         print_gallows(chances_left, chances_total)
       end
@@ -141,13 +184,18 @@ while user_choice == "\r"
         if hidden.include?(guess) # If guessed letter is in word
           update_word(guess, hidden, player_word)
           print_gallows(chances_left, chances_total)
-          check_for_win(player_word, hidden)
+          if check_for_win(player_word, hidden)
+            stats["Wins"] += 1
+            stats["Games"] += 1
+          end
         else # If guessed letter is not in word
           chances_left -= 1
           puts "\nSorry, no ".yellow + "#{guess}".cyan + "'s found.".yellow
           print_gallows(chances_left, chances_total)
           if chances_left == 0
             no_chances(hidden)
+            stats["Losses"] += 1
+            stats["Games"] += 1
             break
           end
         end
@@ -159,7 +207,7 @@ while user_choice == "\r"
   user_choice = ""
   user_choice = end_prompt(user_choice) # Allow user either to play again or to close program
   if user_choice == "\e"
-    puts "Goodbye!"
+    update_record(stats)
     exit 0
   end
 end
